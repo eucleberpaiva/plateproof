@@ -1,0 +1,25 @@
+# Nada de mídia, modelo ou resultado entra no repositório: vídeo tem pessoas e placas,
+# e bruto.json.gz / recortes / auditoria.json têm o TEXTO das placas.
+saida/
+saidas/
+modelos/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.onnx
+*.json.gz
+*.png
+*.jpg
+*.jpeg
+# se você calibrar a sua cena, ela fica fora do git até você decidir o contrário
+cenas/*.toml
+!cenas/exemplo-cruzamento.toml
+
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+desktop.ini
+.DS_Store
