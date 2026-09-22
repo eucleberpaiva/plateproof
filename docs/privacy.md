@@ -53,10 +53,14 @@ original has no read to compare against, the command stops with an error instead
 The command exits with an error whenever it flags anything, by design. The verdict is yours, looking at
 `sheets/verification.jpg` crop by crop.
 
-**Result on the example scene:** across all 12,750 frames the reader returned 8,911 plate-shaped texts,
-nearly all of them a street name sign burned into the corner of the image. Five got within two characters of a
-confident read from the original, and the five crops show that same sign, half covered. No vehicle plate
-came out readable.
+**Prove the attack works before you trust it.** Zero flags can mean the video is clean or it can mean the
+reader never ran. So run the same command against your **original** video first — it should light up. On the
+example scene, 400 frames of the original gave 224 plate-shaped reads, 142 of them within two characters of a
+confident read, minimum edit distance 0, which is an exact hit. That is the control.
+
+**Result on the example scene:** the same attack over all 12,750 frames of the publishable video returned
+**zero** plate-shaped reads. Not zero leaks among many reads: the reader found nothing plate-shaped at all,
+where it had found 224 in 400 frames of the original.
 
 **Blind spots:** the attack uses the same plate detector as the analysis, so a plate it never found in the
 original is not found here either. And a plate whose original read fell below 0.8 confidence is not in the

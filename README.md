@@ -118,9 +118,14 @@ python -m plateproof.sample out/public.mp4 out --n 24
 ```
 
 `verify` exits with an error whenever it flags anything, by design: the verdict is yours, looking at
-`out/sheets/verification.jpg` crop by crop. On the example scene it flagged 5, and all 5 were the street
-name sign burned into the corner of the image. Then open every frame `sample` drew and look for a readable
-plate. Why there are two checks, and what failed before them, is in [`docs/privacy.md`](docs/privacy.md).
+`out/sheets/verification.jpg` crop by crop.
+
+Run it against your **original** video first, as a control. Zero flags means nothing until you have seen the
+same command light up on unpixelated footage. On the example scene the control found 224 plate-shaped reads
+in 400 frames, 142 of them within two characters of a real plate. The publishable video, all 12,750 frames of
+it, returned zero. Then open every frame `sample` drew and look for a readable plate.
+
+Why there are two checks, and what failed before them, is in [`docs/privacy.md`](docs/privacy.md).
 
 ## What is sensitive
 
