@@ -66,6 +66,17 @@ intersection, and the plate rarely gets past 80 px wide; below 40 px the OCR doe
 configuration. For a gate camera built to read plates, Axis asks for 130 px. Details in
 [`docs/how-it-works.md`](docs/how-it-works.md).
 
+## Stack
+
+Computer vision on CPU, with no training and no fine-tuning: object detection (YOLOX-s), multi-object
+tracking (ByteTrack), plate detection (YOLOv9-s) and OCR (a CCT model) — pre-trained deep-learning models
+running inference on ONNX Runtime, wired together with OpenCV and NumPy. Python 3.12+, FFmpeg for the video
+step, `unittest` on GitHub Actions for CI.
+
+The accuracy numbers above are not a benchmark score. They are a hand-labelled evaluation against ground
+truth, crop by crop, and the privacy check runs with a positive control on the original video. What was
+never measured — how many vehicles went by uncounted — is stated as missing rather than rounded away.
+
 ## Install
 
 You need Python 3.12 or newer (developed on 3.14) and [FFmpeg](https://ffmpeg.org) on your PATH, which only
