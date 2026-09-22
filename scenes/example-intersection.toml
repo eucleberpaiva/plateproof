@@ -1,0 +1,114 @@
+# Calibration of a real scene: a fixed traffic camera at a four-way intersection, 1920x1080.
+# These are the settings behind the measured numbers in the README. The video is NOT part of this repository:
+# to run Plateproof, record or obtain footage you have the right to use and copy this file as a starting point.
+#
+# Every coordinate is in pixels of the ORIGINAL video. To find coordinates, pull a frame with
+#   python -m plateproof.sample your-video.mp4 out --n 3
+# and open the image in any editor that shows the cursor position.
+
+[detection]
+vehicle_conf = 0.35      # YOLOX: boxes below this are dropped
+plate_conf = 0.25        # plate detector
+ocr_plate_conf = 0.4     # only read plates detected with at least this confidence...
+ocr_min_width = 40       # ...and at least this width in px (below that the OCR is guessing)
+# Graphics burned into the image (logo, clock, station ident) that the detector mistakes for plates:
+# no plate is read or counted there, but whatever is detected is still pixelated in the shareable video.
+# [x1, y1, x2, y2]
+ignore = [[0, 780, 240, 1080], [0, 0, 560, 50], [940, 0, 1340, 50]]
+
+[tracking]
+min_frames = 20          # a track shorter than this (0.67 s at 30 fps) is detector noise and does not count
+
+[clock]
+# start = "07:30:00"    # optional: time shown by the camera on frame 0, so the viewer shows scene time
+#                       # left commented out on purpose: publishing this publishes the time of day of
+#                       # your recording, and tracks.json carries it into whatever you share.
+
+# ── Traffic lights ─────────────────────────────────────────────────────────────
+# box = [x, y, width, height] covering the whole lamp housing: red on the top third, yellow, green.
+# Calibrated by looking at one red frame and one green frame: a lit lens reads ~255, an unlit one 110-160.
+# flow = true: this light defines the phase that gets crossed with the counts (agreement between the marked ones).
+
+[light_reading]
+lit = 230                # minimum brightness of a lit lens
+margin = 50              # how far it has to beat the second brightest
+
+[[light]]
+name = "left_turn"
+box = [1074, 201, 14, 51]
+flow = false
+
+[[light]]
+name = "through_a"
+box = [1446, 231, 14, 51]
+flow = true
+
+[[light]]
+name = "through_b"
+box = [1645, 265, 15, 51]
+flow = true
+
+# ── Counting lines ─────────────────────────────────────────────────────────────
+# A vehicle is represented by the middle of the bottom edge of its box. Each vehicle counts once, on the
+# FIRST line in this list that it crosses (order matters). direction "right_to_left": picture someone walking
+# from `from` to `to` on screen; the line counts whoever passes from that person's right side to the left.
+# "any" counts both ways. A line may run past the edge of the frame on purpose, so it never clips a vehicle
+# crossing near the border.
+# dx / dy (optional): total displacement the trajectory must have, as an open interval [min, max].
+# plates = true: vehicles on this line show their plate to the camera and go into the plate read statistics.
+
+[[line]]
+name = "straight"
+label = "Going straight, away from the camera"
+from = [300, 720]
+to = [3000, 720]
+direction = "right_to_left"
+dy = [-inf, -60]
+plates = true
+
+[[line]]
+name = "oncoming"
+label = "Coming the other way"
+from = [700, 2000]
+to = [700, -1000]
+direction = "right_to_left"
+dx = [-inf, -300]
+dy = [60, inf]
+plates = true
+
+[[line]]
+name = "cross_westbound"
+label = "Crossing, right to left"
+from = [960, 2000]
+to = [960, -1000]
+direction = "any"
+dx = [-inf, -500]
+dy = [-200, 200]
+
+[[line]]
+name = "cross_eastbound"
+label = "Crossing, left to right"
+from = [960, 2000]
+to = [960, -1000]
+direction = "any"
+dx = [500, inf]
+dy = [-200, 200]
+
+# ── Plates ─────────────────────────────────────────────────────────────────────
+[plates]
+vote_min_conf = 0.6      # an OCR read below this does not vote
+length = [5, 8]          # accepted character count (US plates here; Mercosur plates have 7)
+min_reads = 3            # a plate counts as read with at least 3 reads...
+min_agreement = 0.75     # ...and 75% mean per-character agreement
+
+# ── Shareable video ────────────────────────────────────────────────────────────
+[privacy]
+block = 24               # mosaic cell in px of the original (a whole plate here: 22 px tall median, 39 at p99)
+min_height = 100         # a vehicle box this tall or taller always gets its lower band pixelated
+band = [-0.05, 0.30, 1.05, 1.05]   # band as a fraction of the box [x1, y1, x2, y2]: from 30% height to the bottom
+frame_slack = 5          # the band also applies a few frames before and after the track exists
+output_width = 1280
+# Areas pixelated in every frame, whatever is under them. Use it for anything burned into the image that
+# you do not want republished: a camera clock with the date, an overlay from your own system, a doorway.
+# Here: the date burned into the camera clock (the time stays).
+masks = [[215, 0, 560, 46]]

@@ -1,20 +1,22 @@
-# Nada de mídia, modelo ou resultado entra no repositório: vídeo tem pessoas e placas,
-# e bruto.json.gz / recortes / auditoria.json têm o TEXTO das placas.
-saida/
-saidas/
-modelos/
+# No media, model or result belongs in this repository: video has people and plates in it, and
+# raw.json.gz / crops / audit.json / texts.json carry plate TEXT.
+out/
+output/
+models/
 *.mp4
 *.mov
 *.avi
 *.mkv
 *.onnx
 *.json.gz
+# no image either: a frame of your footage is still your footage, and a contact sheet from plateproof.audit
+# has the plate text drawn onto the pixels, where the safety net cannot see it
 *.png
 *.jpg
 *.jpeg
-# se você calibrar a sua cena, ela fica fora do git até você decidir o contrário
-cenas/*.toml
-!cenas/exemplo-cruzamento.toml
+# your own scene calibration stays out of git until you decide otherwise
+scenes/*.toml
+!scenes/example-intersection.toml
 
 .venv/
 __pycache__/
