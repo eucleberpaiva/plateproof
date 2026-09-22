@@ -6,6 +6,6 @@ fast-plate-ocr==1.1.0
 open-image-models==0.6.0
 onnxruntime==1.24.4
 opencv-python-headless==5.0.0.93
-numpy==2.4.4
+numpy==2.5.3
 # ByteTrack was removed in 0.31: do not bump without replacing the tracker
 supervision==0.30.3
