@@ -1,135 +1,201 @@
-# Vigia
+# Plateproof · vehicle counting, traffic-light phases and license-plate reading on CPU
 
-Conta veículos por tipo e por direção, lê o semáforo pela luz acesa e lê placas em vídeo de câmera fixa. Roda em CPU, sem placa de vídeo. Gera um vídeo com as placas escondidas e traz duas conferências para rodar antes de mostrar esse vídeo a alguém.
+[![tests](https://github.com/eucleberpaiva/plateproof/actions/workflows/tests.yml/badge.svg)](https://github.com/eucleberpaiva/plateproof/actions/workflows/tests.yml)
 
-> **English summary.** Vigia counts vehicles by class and direction, reads traffic-light phases from lens brightness and reads license plates from fixed-camera video, CPU only (ONNX Runtime). Its main contribution is the privacy step: plates are pixelated in layers, and it ships two checks to run before anyone sees the video: an automatic attack with the same plate reader and a whole-frame manual review. Docs are in Portuguese; code identifiers too.
+Point it at video from a fixed camera and get numbers out: vehicles counted by class and by direction,
+traffic-light phases read from the lamps themselves, license plates read and then pixelated. Everything runs
+on CPU through ONNX Runtime, with no GPU and no PyTorch. And before the video goes anywhere, two checks
+attack it with the same plate reader to prove the plates are gone.
 
-O repositório não traz vídeo nenhum. Você usa o seu.
+**This is a lab, not a product.** It ships no footage, no screenshot, no model weights and no results — you
+bring your own video. Everything below was measured on one real scene: 7 minutes of a fixed camera at an
+intersection, 12,750 frames, on a laptop with no GPU. The numbers include what it got wrong. Of the 53
+vehicles the model called a truck, 8 were trucks. Four to six out of 168 were counted twice. How many it
+missed entirely was never measured.
 
-## O que ele faz
+What step 2 prints at the end of that run:
 
-| Etapa | Comando | O que sai |
+```
+316 vehicles counted across 606 tracks
+  straight             car 137  truck 30  motorcycle 1
+  oncoming             car 86  truck 12
+  cross_westbound      car 39  truck 11
+plates: 47 read out of 266 candidates (170 had a plate detected)
+traffic light: 3 full cycles
+ok -> out/summary.json, tracks.json (publishable); audit.json and texts.json (SENSITIVE)
+```
+
+[How it works, stage by stage](docs/how-it-works.md) · [The privacy method, and what it cannot
+prove](docs/privacy.md)
+
+## What it does
+
+| Step | Command | What comes out |
 |---|---|---|
-| 0. Modelos | `python -m vigia.modelos` | 3 modelos ONNX baixados da fonte original, com SHA-256 conferido |
-| 1. Analisar | `python -m vigia.analisar` | veículos, rastros, placas e semáforo, quadro a quadro, com o tempo de cada etapa |
-| 2. Resumir | `python -m vigia.resumo` | contagem por linha e classe, fases do semáforo, taxa de leitura de placa |
-| 3. Esconder placas | `python -m vigia.privacidade` | `publico.mp4`, com placas pixeladas |
-| 4. Conferir | `python -m vigia.verificar` e `python -m vigia.amostrar` | ataque automático ao vídeo público e quadros inteiros sorteados para olhar |
-| Ver | `visor/index.html` | vídeo com caixas, rastros, linhas e contadores, tudo no navegador |
+| 0. Models | `python -m plateproof.models` | 3 ONNX models from their original source, SHA-256 verified |
+| 1. Analyze | `python -m plateproof.analyze` | vehicles, tracks, plates and traffic lights, frame by frame, with the time each stage took |
+| 2. Summarize | `python -m plateproof.summarize` | counts per line and class, light phases, plate read rate |
+| 3. Hide plates | `python -m plateproof.privacy` | `public.mp4`, with the plates pixelated |
+| 4. Check | `python -m plateproof.verify` and `python -m plateproof.sample` | an automatic attack on that video, plus whole frames to review by eye |
+| View | `viewer/index.html` | video, boxes, trails, counting lines and live counters, in the browser |
 
-## O que foi medido numa cena real
+## Measured on a real scene
 
-Sete minutos de uma câmera de trânsito num cruzamento (12.750 quadros, 1920x1080), num notebook com Intel Core i7-13700H e sem GPU. A calibração dessa cena está em [`cenas/exemplo-cruzamento.toml`](cenas/exemplo-cruzamento.toml).
+Seven minutes of a fixed traffic camera at an intersection (12,750 frames, 1920x1080) on a laptop with an
+Intel Core i7-13700H and no GPU. The calibration for that scene is in
+[`scenes/example-intersection.toml`](scenes/example-intersection.toml).
 
-- **316 veículos contados** em 3 movimentos: 168 seguindo em frente, 98 no sentido contrário, 50 pela transversal.
-- **3 ciclos completos de semáforo** lidos pela cor das lentes, sem ligação com o controlador.
-- **47 placas lidas** em 266 passagens em que a placa ficava de frente para a câmera.
-- **5,5 quadros por segundo** com tudo ligado. As duas detecções levam quase todo o tempo: 75 ms (veículos) e 88 ms (placas) por quadro, na mediana.
+- **316 vehicles counted** across 3 movements: 168 going straight, 98 coming the other way, 50 crossing.
+- **3 full traffic light cycles** read from lens brightness, with no connection to the controller.
+- **47 plates read** out of 266 passes where the plate faced the camera.
+- **5.5 frames per second** with everything switched on. The two detectors take almost all of it: 75 ms
+  (vehicles) and 88 ms (plates) per frame, median.
 
-E o que a conferência manual achou nesses números:
+And what the manual review found in those numbers:
 
-- **Placas:** 32 das 47 estavam exatas. 11 tinham um caractere trocado, quase sempre 8 lido como B, e 4 nem a olho dava para ler.
-- **Caminhões:** dos 53 veículos que o modelo chamou de caminhão, 8 eram caminhões. O resto eram 24 picapes, 13 vans, 3 reboques e 5 SUVs. O modelo aprendeu no COCO, onde picape e van costumam cair nessa classe.
-- **Contagem dupla:** de 4 a 6 dos 168 que seguiram em frente foram contados a mais. Reboques entram separados do veículo que os puxa, e um poste na frente da câmera faz o rastreador trocar de número.
-- **Não medido:** quantos veículos passaram sem ser contados.
+- **Plates:** 32 of the 47 were exactly right. 11 had one character wrong, nearly always an 8 read as a B,
+  and 4 were unreadable even by eye.
+- **Trucks:** of the 53 vehicles the model called a truck, 8 were trucks. The rest were 24 pickups, 13 vans,
+  3 trailers and 5 SUVs. The model learned on COCO, where pickups and vans usually land in that class.
+- **Double counts:** 4 to 6 of the 168 going straight were counted twice. Trailers come in separately from
+  the vehicle towing them, and a pole in front of the camera makes the tracker switch IDs.
+- **Not measured:** how many vehicles went by without being counted.
 
-O que mais pesou na leitura de placa foi o tamanho dela na imagem. Esta câmera foi instalada para mostrar o cruzamento, e a placa quase nunca passa de 80 px de largura; abaixo de 40 px o OCR nem roda, por configuração. Para uma câmera de portaria feita para ler placa, a Axis pede 130 px. O detalhe está em [`docs/como-funciona.md`](docs/como-funciona.md).
+What drove the plate read rate was plate size in the image. This camera was installed to show the
+intersection, and the plate rarely gets past 80 px wide; below 40 px the OCR does not even run, by
+configuration. For a gate camera built to read plates, Axis asks for 130 px. Details in
+[`docs/how-it-works.md`](docs/how-it-works.md).
 
-## Instalar
+## Install
 
-Precisa de Python 3.12 ou mais novo (desenvolvido em 3.14) e do [FFmpeg](https://ffmpeg.org) no PATH, que só a etapa 3 usa.
+You need Python 3.12 or newer (developed on 3.14) and [FFmpeg](https://ffmpeg.org) on your PATH, which only
+step 3 uses.
 
 ```bash
-git clone https://github.com/eucleberpaiva/vigia.git
-cd vigia
+git clone https://github.com/eucleberpaiva/plateproof.git
+cd plateproof
 python -m venv .venv
 # Windows: .venv\Scripts\activate    ·    Linux/macOS: source .venv/bin/activate
 python -m pip install --require-hashes -r requirements.txt
-python -m vigia.modelos
+python -m plateproof.models
 python -m unittest -v
 ```
 
-`--require-hashes` faz o pip recusar qualquer pacote cujo hash não seja o registrado em `requirements.txt`. `vigia.modelos` faz o mesmo com os modelos: se a fonte trocar o arquivo, o download falha em vez de rodar outro modelo. Os testes não precisam de vídeo nem de modelo.
+`--require-hashes` makes pip refuse any package whose hash is not the one pinned in `requirements.txt`.
+`plateproof.models` does the same for the models: if the source swaps a file, the download fails instead of
+running a different model. The tests need no video and no model.
 
-## Rodar no seu vídeo
+## Run it on your own video
 
-**1. Calibre a cena.** Copie o exemplo e ajuste para a sua câmera:
-
-```bash
-cp cenas/exemplo-cruzamento.toml cenas/minha-cena.toml
-python -m vigia.amostrar meu-video.mp4 saida --n 3
-```
-
-Abra os quadros de `saida/folhas/` num editor de imagem que mostre a posição do cursor e anote as coordenadas: as linhas de contagem, a caixa de cada semáforo e as áreas que não são placa (logotipo, relógio). Cada campo está explicado no próprio arquivo. `cenas/*.toml` fica fora do git (menos o exemplo), então sua calibração não vai parar num commit por engano.
-
-**2. Rode.** Teste com poucos quadros antes de mandar o vídeo inteiro:
+**1. Calibrate the scene.** Copy the example and adjust it to your camera:
 
 ```bash
-python -m vigia.analisar meu-video.mp4 cenas/minha-cena.toml saida --max 300
-python -m vigia.resumo cenas/minha-cena.toml saida
+cp scenes/example-intersection.toml scenes/my-scene.toml
+python -m plateproof.sample my-video.mp4 out --n 3
 ```
 
-**3. Veja.** Abra `visor/index.html` no navegador e escolha o vídeo e o `saida/trilhas.json`. Nenhum arquivo sai do seu computador: a página não faz nenhuma requisição de rede.
+Open the frames in `out/sheets/` in any image editor that shows the cursor position and write down the
+coordinates: the counting lines, the box around each traffic light and the areas that are not plates (logo,
+clock). Every field is explained inside the file. `scenes/*.toml` is git-ignored, so your calibration will
+not end up in a commit by accident.
 
-**4. Antes de mostrar o vídeo para alguém:**
+**2. Run it.** Try a few frames before feeding it the whole video:
 
 ```bash
-python -m vigia.privacidade meu-video.mp4 cenas/minha-cena.toml saida
-python -m vigia.verificar saida/publico.mp4 cenas/minha-cena.toml saida
-python -m vigia.amostrar saida/publico.mp4 saida --n 24
+python -m plateproof.analyze my-video.mp4 scenes/my-scene.toml out --max 300
+python -m plateproof.summarize scenes/my-scene.toml out
 ```
 
-O `verificar` termina com erro sempre que marca alguma leitura, de propósito: quem decide é você, olhando `saida/folhas/verificacao.jpg` recorte a recorte. Na cena de exemplo ele marcou 5, e as 5 eram o letreiro de rua que o canal desenha no canto. Depois abra cada quadro sorteado pelo `amostrar` e procure qualquer placa legível. O motivo de ter os dois testes, e o que falhou até chegar neles, está em [`docs/privacidade.md`](docs/privacidade.md).
+**3. Watch it.** Open `viewer/index.html` in your browser and pick the video and `out/tracks.json`. Nothing
+leaves your machine: the page makes no network request at all (`default-src 'none'`).
 
-## O que é sensível
+**4. Before you show the video to anybody:**
 
-| Arquivo | Contém | Pode publicar? |
+```bash
+python -m plateproof.privacy my-video.mp4 scenes/my-scene.toml out
+python -m plateproof.verify out/public.mp4 scenes/my-scene.toml out
+python -m plateproof.sample out/public.mp4 out --n 24
+```
+
+`verify` exits with an error whenever it flags anything, by design: the verdict is yours, looking at
+`out/sheets/verification.jpg` crop by crop. On the example scene it flagged 5, and all 5 were the street
+name sign burned into the corner of the image. Then open every frame `sample` drew and look for a readable
+plate. Why there are two checks, and what failed before them, is in [`docs/privacy.md`](docs/privacy.md).
+
+## What is sensitive
+
+| File | Contains | Publishable? |
 |---|---|---|
-| seu vídeo original | pessoas e placas | não |
-| `saida/bruto.json.gz` | texto de todas as placas lidas, quadro a quadro | não |
-| `saida/recortes/`, `saida/auditoria.json`, `saida/textos.json`, `saida/folhas/` | imagem e texto de placas | não |
-| `saida/resumo.json`, `saida/trilhas.json` | números, caixas e cruzamentos, sem texto de placa | sim |
-| `saida/publico.mp4` | vídeo com placas pixeladas; **rostos não são tratados** | só depois da etapa 4, e se não houver rosto reconhecível |
+| your source video | people and plates | no |
+| `out/raw.json.gz` | text of every plate read, frame by frame | no |
+| `out/crops/`, `out/audit.json`, `out/texts.json`, `out/sheets/` | plate images and text | no |
+| `out/summary.json`, `out/tracks.json` | numbers, boxes and crossings, no plate text | yes, with the note below |
+| `out/public.mp4` | video with plates pixelated; **faces are not handled** | only after step 4, and only if no face is recognizable |
 
-`resumo.json` e `trilhas.json` passam por uma checagem antes de serem gravados: se algum texto de placa aparecer neles, nada é gravado. A pasta `saida/`, vídeos, imagens e modelos estão no `.gitignore`, e um teste falha se algum desses arquivos entrar no repositório.
+`tracks.json` also carries what you typed into the scene file: the name and label of every counting line and
+the wall clock of frame 0. Name a line after a street and you publish the location; keep `[clock]` and you
+publish the time of day of the recording.
 
-## Uso responsável
+`summary.json` and `tracks.json` are checked before they are written: if any plate text shows up in them,
+nothing is written. `out/`, videos, images and models are git-ignored, and a test fails if any of them ever
+gets committed.
 
-Placa de veículo pode identificar uma pessoa. No Brasil vale a LGPD, e outros lugares têm regras próprias para leitura automática de placas. Antes de apontar isto para uma câmera:
+## Responsible use
 
-- **Direito de uso:** use vídeo que você tem direito de usar. Câmera sua, com aviso a quem passa, ou material com licença que permita.
-- **O mínimo necessário:** se você só precisa contar veículos, rode `vigia.analisar` com `--sem-texto`: a placa ainda é detectada para ser pixelada, mas nenhum texto nem recorte é gravado. Se leu placas, apague `bruto.json.gz`, `recortes/`, `auditoria.json` e `textos.json` quando terminar a conferência.
-- **Nunca publique o original.** Publique só o que passou pela etapa 4.
+A license plate can identify a person. Brazil has the LGPD, and other places have specific rules for
+automatic plate reading. Before you point this at a camera:
 
-Serve para aprender e medir trânsito. A licença não autoriza ninguém a descumprir a lei.
+- **Right to use the footage:** your own camera, with a notice to the people going by, or material under a
+  license that allows it.
+- **The minimum you need:** if all you want is the count, run `plateproof.analyze` with `--no-text`: plates are
+  still detected so they can be pixelated, but no text and no crop is written. If you did read plates,
+  delete `raw.json.gz`, `crops/`, `audit.json` and `texts.json` when the review is over.
+- **Never publish the original.** Publish only what came through step 4.
 
-## Limites conhecidos
+It is here to learn from and to measure traffic with. The license does not allow anyone to break the law.
 
-- **Placas brasileiras:** o leitor de placa (`cct-xs-v2-global`) não foi testado com placas Mercosul, só com as desta cena, dos EUA.
-- **Velocidade:** 5,5 quadros por segundo não é tempo real para vídeo a 30 quadros por segundo.
-- **Rastreador:** o ByteTrack saiu do `supervision` na versão 0.31, por isso a versão está travada.
-- **Privacidade:** a camada que cobre placas não detectadas depende do detector de veículos. Veículo e placa perdidos no mesmo quadro ficam sem cobertura automática, e é por isso que a conferência a olho existe. Rostos não são tratados. O mosaico não foi testado contra reconstrução que combina vários quadros.
+## Known limits
 
-## Como contribuir
+- **Brazilian plates:** the reader (`cct-xs-v2-global`) has not been tested against Mercosur plates, only
+  against the US plates in this scene.
+- **Speed:** 5.5 frames per second is not real time for 30 fps video.
+- **Tracker:** ByteTrack was dropped from `supervision` in 0.31, which is why the version is pinned. The
+  pinned version prints a `FutureWarning` about it on every run; nothing is broken.
+- **Privacy:** the layer that covers undetected plates depends on the vehicle detector, so a vehicle and a
+  plate missed in the same frame is not covered automatically, which is what the visual review is for. Faces
+  are not handled, and neither is anything else that identifies somebody: the company name painted on a
+  van, a bumper sticker, a school badge. Only the plate is treated as personal data here. The mosaic has
+  not been tested against reconstruction attacks that combine many frames.
 
-É um lab: issue é bem-vinda, sem prazo de resposta. Algumas coisas que valem medir:
+## How to contribute
 
-- **Veículos perdidos:** contar um trecho à mão e comparar com a contagem automática, o número que falta neste README.
-- **Rastreador:** trocar o ByteTrack por um mantido e comparar a contagem dupla.
-- **Privacidade:** um ataque que combine vários quadros para tentar reconstruir o mosaico, e um jeito de tratar rostos.
+It is a lab: issues are welcome, with no promise of a response time. A few things worth measuring:
 
-Rode `python -m unittest` antes de mandar um PR, e nunca anexe vídeo ou imagem com placa ou rosto reconhecível, nem em issue.
+- **Missed vehicles:** count a stretch by hand and compare it with the automatic count, the number this
+  README is missing.
+- **Tracker:** swap ByteTrack for a maintained one and compare the double counts.
+- **Privacy:** an attack that combines several frames to try to reconstruct the mosaic, and a way to handle
+  faces.
 
-## Créditos
+Run `python -m unittest` before sending a PR, and never attach video or images with a readable plate or
+face, not even in an issue.
 
-- **Detecção de veículos:** [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX), Megvii, Apache-2.0. Treinado no [COCO](https://cocodataset.org) (Lin et al., 2014), anotações CC BY 4.0.
-- **Detecção de placa:** [open-image-models](https://github.com/ankandrew/open-image-models), ankandrew, MIT. Arquitetura [YOLOv9](https://arxiv.org/abs/2402.13616) (Wang, Yeh e Liao, 2024).
-- **Leitura de placa:** [fast-plate-ocr](https://github.com/ankandrew/fast-plate-ocr) e [fast-alpr](https://github.com/ankandrew/fast-alpr), ankandrew, MIT.
-- **Rastreio:** ByteTrack (Zhang et al., 2022) pela biblioteca [supervision](https://github.com/roboflow/supervision), Roboflow, MIT.
-- **Execução:** [ONNX Runtime](https://onnxruntime.ai) (MIT), [OpenCV](https://opencv.org) (Apache-2.0), [FFmpeg](https://ffmpeg.org) (LGPL/GPL).
+## Credits
 
-Este repositório não redistribui nenhum peso de modelo. Cada um é baixado da fonte original, e vale conferir a licença de cada modelo para o seu uso.
+- **Vehicle detection:** [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX), Megvii, Apache-2.0. Trained
+  on [COCO](https://cocodataset.org) (Lin et al., 2014), annotations under CC BY 4.0.
+- **Plate detection:** [open-image-models](https://github.com/ankandrew/open-image-models), ankandrew, MIT.
+  [YOLOv9](https://arxiv.org/abs/2402.13616) architecture (Wang, Yeh and Liao, 2024).
+- **Plate reading:** [fast-plate-ocr](https://github.com/ankandrew/fast-plate-ocr) and
+  [fast-alpr](https://github.com/ankandrew/fast-alpr), ankandrew, MIT.
+- **Tracking:** ByteTrack (Zhang et al., 2022) through
+  [supervision](https://github.com/roboflow/supervision), Roboflow, MIT.
+- **Runtime:** [ONNX Runtime](https://onnxruntime.ai) (MIT), [OpenCV](https://opencv.org) (Apache-2.0),
+  [FFmpeg](https://ffmpeg.org) (LGPL/GPL).
 
-## Licença
+No model weights are redistributed here. Each one is downloaded from its original source, and it is worth
+checking each model's license for your own use.
 
-Código sob [MIT](LICENSE). © 2026 Cleber Paiva.
+## License
+
+Code under [MIT](LICENSE). © 2026 Cleber Paiva · [cleberpaiva.com.br](https://cleberpaiva.com.br)

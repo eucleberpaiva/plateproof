@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    ignore:
+      # supervision dropped ByteTrack in 0.31; the pin is deliberate (see README, Known limits)
+      - dependency-name: supervision
   - package-ecosystem: github-actions
     directory: /
     schedule:

@@ -1,5 +1,5 @@
-# Dependências diretas, versões exatas com que os números do README foram medidos.
-# requirements.txt é gerado a partir daqui com hash de cada pacote:
+# Direct dependencies, pinned to the exact versions the README numbers were measured with.
+# requirements.txt is generated from this file with a hash for every package:
 #   uv pip compile requirements.in --universal --generate-hashes --python-version 3.12 -o requirements.txt
 fast-alpr==0.4.0
 fast-plate-ocr==1.1.0
@@ -7,5 +7,5 @@ open-image-models==0.6.0
 onnxruntime==1.24.4
 opencv-python-headless==5.0.0.93
 numpy==2.4.4
-# ByteTrack foi removido na 0.31: não subir sem trocar o rastreador
+# ByteTrack was removed in 0.31: do not bump without replacing the tracker
 supervision==0.30.3

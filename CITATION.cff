@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "Plateproof: vehicle counting, traffic-light phases and license-plate reading on CPU"
+message: "If you use these measurements or this method, please cite the repository."
+type: software
+authors:
+  - family-names: Paiva
+    given-names: Cleber
+    website: "https://cleberpaiva.com.br"
+repository-code: "https://github.com/eucleberpaiva/plateproof"
+license: MIT
+version: 0.1.0
+date-released: "2026-09-22"
+keywords:
+  - vehicle counting
+  - license plate recognition
+  - video anonymization
+  - CPU inference
+  - ONNX Runtime
