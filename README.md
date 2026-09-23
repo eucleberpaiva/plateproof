@@ -174,7 +174,9 @@ It is here to learn from and to measure traffic with. The license does not allow
 
 - **Brazilian plates:** the reader (`cct-xs-v2-global`) has not been tested against Mercosur plates, only
   against the US plates in this scene.
-- **Speed:** 5.5 frames per second is not real time for 30 fps video.
+- **Speed:** 5.5 frames per second is not real time for 30 fps video. Every timing here was measured on
+  onnxruntime 1.24.4; a different runtime version is a different measurement, so that one is pinned until
+  it is re-measured.
 - **Tracker:** ByteTrack was dropped from `supervision` in 0.31, which is why the version is pinned. The
   pinned version prints a `FutureWarning` about it on every run; nothing is broken.
 - **Privacy:** the layer that covers undetected plates depends on the vehicle detector, so a vehicle and a

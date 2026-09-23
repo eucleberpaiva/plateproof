@@ -7,6 +7,10 @@ updates:
     ignore:
       # supervision dropped ByteTrack in 0.31; the pin is deliberate (see README, Known limits)
       - dependency-name: supervision
+      # every timing in the README was measured on onnxruntime 1.24.4, including the spin-wait finding.
+      # Security patches still come through; a minor or major bump has to be re-measured first.
+      - dependency-name: onnxruntime
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
