@@ -7,13 +7,18 @@ models/
 *.mov
 *.avi
 *.mkv
+# a gravação de tela do README é exceção declarada
+!docs/media/demo.mp4
 *.onnx
 *.json.gz
-# no image either: a frame of your footage is still your footage, and a contact sheet from plateproof.audit
-# has the plate text drawn onto the pixels, where the safety net cannot see it
+# a frame of your footage is still your footage, and a contact sheet from plateproof.audit has the plate
+# text drawn onto the pixels, where the safety net cannot see it. The two README stills are the exception,
+# by name, and they come from the published video: plates pixelated, checked, credited.
 *.png
 *.jpg
 *.jpeg
+!docs/images/viewer.jpg
+!docs/images/overlay.jpg
 # your own scene calibration stays out of git until you decide otherwise
 scenes/*.toml
 !scenes/example-intersection.toml

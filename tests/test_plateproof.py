@@ -112,20 +112,23 @@ class Repository(unittest.TestCase):
                                    check=True).stdout.split()
         except (OSError, subprocess.CalledProcessError):
             self.skipTest("not inside a git repository")
+        allowed_media = {"docs/media/demo.mp4", "docs/images/viewer.jpg", "docs/images/overlay.jpg"}
         blocked = (".mp4", ".mov", ".avi", ".mkv", ".onnx", ".json.gz")
         results = {"raw.json", "audit.json", "texts.json", "verification.json", "summary.json", "tracks.json"}
-        self.assertEqual([f for f in files if f.lower().endswith(blocked)], [])
+        self.assertEqual([f for f in files if f.lower().endswith(blocked) and f not in allowed_media], [])
         self.assertEqual([f for f in files if f.split("/")[0] in ("out", "output", "crops", "sheets", "models")
                           or f.split("/")[-1] in results], [])
-        # not one image: a frame of the footage is still the footage, and a contact sheet from plateproof.audit
-        # has the plate text drawn onto the pixels, where ensure_no_plate_text cannot see it
-        self.assertEqual([f for f in files if f.lower().endswith((".png", ".jpg", ".jpeg"))], [])
+        # the only images are the two README stills, by name: a contact sheet from plateproof.audit has the
+        # plate text drawn onto the pixels, where ensure_no_plate_text cannot see it
+        self.assertEqual([f for f in files if f.lower().endswith((".png", ".jpg", ".jpeg"))
+                          and f not in allowed_media], [])
         # nobody else's scene calibration: it carries coordinates of a real camera
         self.assertEqual([f for f in files if f.startswith("scenes/")
                           and f != "scenes/example-intersection.toml"], [])
-        # nothing versioned here is heavier than 1 MB: this repository is text
+        # only the README assets may be heavier than 1 MB, and nothing goes past 4 MB
         big = [f for f in files if (ROOT / f).exists() and (ROOT / f).stat().st_size > 1_000_000]
-        self.assertEqual(big, [])
+        self.assertEqual([f for f in big if f not in allowed_media], [])
+        self.assertEqual([f for f in big if (ROOT / f).stat().st_size > 4_000_000], [])
 
 if __name__ == "__main__":
     unittest.main()

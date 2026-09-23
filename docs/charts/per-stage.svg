@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="Milliseconds per frame for each stage of the pipeline">
+<rect width="1200" height="420" fill="#F4F3EF"/>
+<text x="330" y="36" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="22" fill="#8A877F" text-anchor="start" font-weight="400">MILLISECONDS PER FRAME · BAR = MEDIAN · TICK = 95TH PERCENTILE</text>
+<rect x="330" y="70" width="27" height="30" fill="#14161A"/>
+<line x1="370" x2="370" y1="64" y2="106" stroke="#8A877F" stroke-width="3"/>
+<text x="310" y="92" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" fill="#55534D" text-anchor="end" font-weight="400">decode</text>
+<text x="384.1028277634961" y="92" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="20" fill="#8A877F" text-anchor="start" font-weight="400">4.3 / 6.5 ms</text>
+<rect x="330" y="136" width="463" height="30" fill="#14161A"/>
+<line x1="924" x2="924" y1="130" y2="172" stroke="#8A877F" stroke-width="3"/>
+<text x="310" y="158" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" fill="#55534D" text-anchor="end" font-weight="400">detect vehicles</text>
+<text x="938.1388174807197" y="158" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="20" fill="#8A877F" text-anchor="start" font-weight="400">75.0 / 96.3 ms</text>
+<rect x="330" y="202" width="14" height="30" fill="#14161A"/>
+<line x1="360" x2="360" y1="196" y2="238" stroke="#8A877F" stroke-width="3"/>
+<text x="310" y="224" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" fill="#55534D" text-anchor="end" font-weight="400">track</text>
+<text x="374.23136246786635" y="224" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="20" fill="#8A877F" text-anchor="start" font-weight="400">2.2 / 4.9 ms</text>
+<rect x="330" y="268" width="540" height="30" fill="#2B4CFF"/>
+<line x1="1050" x2="1050" y1="262" y2="304" stroke="#8A877F" stroke-width="3"/>
+<text x="310" y="290" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" fill="#55534D" text-anchor="end" font-weight="400">detect plates</text>
+<text x="1064.0" y="290" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="20" fill="#8A877F" text-anchor="start" font-weight="400">87.5 / 116.7 ms</text>
+<rect x="330" y="334" width="3" height="30" fill="#14161A"/>
+<line x1="379" x2="379" y1="328" y2="370" stroke="#8A877F" stroke-width="3"/>
+<text x="310" y="356" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" fill="#55534D" text-anchor="end" font-weight="400">read plates (OCR)</text>
+<text x="392.74035989717225" y="356" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="20" fill="#8A877F" text-anchor="start" font-weight="400">0.1 / 7.9 ms</text>
+<text x="330" y="400" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="18" fill="#8A877F" text-anchor="start" font-weight="400">THE TWO DETECTORS ARE 163 MS OF EVERY FRAME. EVERYTHING ELSE IS NOISE.</text>
+</svg>
