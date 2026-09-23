@@ -1,7 +1,8 @@
 # How it works
 
 Every stage, why it is built that way and what was measured. The numbers come from the example scene:
-7 minutes, 12,750 frames at 1920x1080, on a laptop with an Intel Core i7-13700H and no GPU.
+7 minutes, 12,750 frames at 1920x1080, on a laptop CPU with no GPU. The absolute times below are worth
+less than the ratios between them: the two detectors are 97% of every frame, and that holds on any CPU.
 
 ## 1. Detect vehicles · `plateproof/yolox.py`
 

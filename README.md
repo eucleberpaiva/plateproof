@@ -19,7 +19,7 @@ traffic light, in sync with the video.
 >
 > A lab, not a product. It ships no source footage, no model weights and no results: you bring your own
 > video. Everything below was measured on one real scene — 7 minutes of a fixed traffic camera, 12,750 frames
-> at 1920x1080, on a laptop with an Intel Core i7-13700H and **no GPU**.
+> at 1920x1080, on a laptop CPU, with **no GPU**.
 >
 > The numbers include what it got wrong. Of the 53 vehicles the model called a truck, 8 were trucks. Four to
 > six out of 168 were counted twice. And how many vehicles went by without being counted at all was never
