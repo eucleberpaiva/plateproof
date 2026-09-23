@@ -2,8 +2,9 @@
 
 Turn video from a fixed camera into numbers — vehicles counted by class and direction, traffic-light phases
 read from the lamps themselves, license plates read and then pixelated. **On CPU alone**, with no GPU and no
-PyTorch. And before the video goes anywhere, two checks attack it with the same plate reader to prove the
-plates are gone.
+PyTorch. And before the video goes anywhere, the same plate reader attacks its own output to show the
+plates are gone — with a positive control, because zero findings reads the same when the video is clean
+and when the tool broke.
 
 [![tests](https://github.com/eucleberpaiva/plateproof/actions/workflows/tests.yml/badge.svg)](https://github.com/eucleberpaiva/plateproof/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
