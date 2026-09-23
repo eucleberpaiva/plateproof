@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" width="1600" height="1000" role="img" aria-label="606 vehicle trajectories drawn as a technical drawing, with the three counting lines">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" width="1600" height="1000" role="img" aria-label="Every vehicle trajectory drawn as a technical drawing, with the counting lines">
 <rect width="1920" height="1200" fill="#F4F3EF"/>
 <g fill="none" stroke="#14161A" stroke-opacity="0.30" stroke-width="2.4" stroke-linecap="round">
 <path d="M990,1035 L990,1036 L989,1036 L993,1037 L992,1038 L992,1037 L992,1037 L992,1037 L990,1035 L988,1035 L990,1035 L990,1034 L988,1035 L973,1055 L977,1042 L981,1022 L982,996 L970,1025 L983,976 L984,973 L988,941 L990,930 L982,924 L985,949 L982,953 L984,939 L986,1018 L986,1010 L986,1015 L983,1029 L986,1032 L988,1029 L992,1040 L989,1044 L989,1012 L987,982 L998,964 L993,924 L992,906 L989,896 L985,874 L954,850 L962,841 L940,818 L978,808 L979,798 L938,785 L945,783 L954,778 L958,814 L1002,756 L962,916 L993,826 L955,835 L938,851 L991,831 L944,762 L986,741 L980,729 L996,730 L978,711 L978,711 L940,710 L940,710 L993,711 L998,704 L998,707 L1000,707 L1001,709 L1000,709 L1000,706 L997,704 L998,707 L996,715 L997,708 L936,703 L960,706 L981,702 L956,700 L934,701 L942,699 L957,701 L954,699 L991,702 L976,697 L980,703 L977,701 L992,702 L995,700 L995,703 L992,704 L992,702 L994,702 L996,705 L992,707 L994,709 L996,706 L996,706 L996,705 L994,705 L994,706 L977,710 L930,709 L976,711 L924,710 L994,707 L990,707 L994,710 L984,708 L996,707 L994,703 L992,704 L970,705 L990,705 L992,704 L990,705 L980,710 L994,706 L980,707 L985,707 L985,707 L996,703 L996,703 L996,703 L996,703 L996,703 L998,706 L999,707 L987,711 L987,711 L987,711 L938,712"/>
@@ -614,6 +614,6 @@
 <line x1="960" y1="2000" x2="960" y2="-1000"/>
 <line x1="960" y1="2000" x2="960" y2="-1000"/>
 </g>
-<text x="0" y="1140" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="34" fill="#8A877F" text-anchor="start" font-weight="400">606 TRACKS · 316 LINE CROSSINGS · 12,750 FRAMES</text>
-<text x="1920" y="1140" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="34" fill="#8A877F" text-anchor="end" font-weight="400">THE THREE COUNTING LINES, IN BLUE</text>
+<text x="0" y="1140" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="34" fill="#8A877F" text-anchor="start">606 TRACKS · 316 LINE CROSSINGS · 12,750 FRAMES</text>
+<text x="1920" y="1140" font-family="ui-monospace, 'Cascadia Mono', 'DejaVu Sans Mono', monospace" font-size="34" fill="#8A877F" text-anchor="end">THE COUNTING LINES, IN BLUE</text>
 </svg>

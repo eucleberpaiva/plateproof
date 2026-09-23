@@ -83,7 +83,8 @@ ok -> out/summary.json, tracks.json (publishable); audit.json and texts.json (SE
 - **316 vehicles counted** across 3 movements: 168 going straight, 98 coming the other way, 50 crossing.
 - **3 full traffic light cycles** read from lens brightness, with no connection to the controller.
 - **47 plates read** out of 266 passes where a plate faced the camera.
-- **5.5 frames per second** with everything switched on.
+- **5.5 frames per second** with everything switched on. The two detectors are 162.5 ms of every frame;
+  everything else is noise.
 
 And what the manual review found in those numbers:
 
@@ -338,7 +339,8 @@ plateproof/
 ├── docs/
 │   ├── how-it-works.md  every stage, why it is built that way and what was measured
 │   ├── privacy.md       the method, the attempts that failed, and what the checks cannot prove
-│   └── charts/          the drawings in this README, generated from the run's own data
+│   └── charts/          the drawings in this README, and make_charts.py, which regenerates them
+│                        from out/tracks.json and out/summary.json
 └── tests/
     └── test_plateproof.py   17 tests, no video and no model needed
 ```
